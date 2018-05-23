@@ -38,5 +38,44 @@
  * };
  */
 struct ListNode* removeNthFromEnd(struct ListNode* head, int n) {
+    typedef struct ListNode* Node;
+    Node tmp = head;
+    Node removeNode;
+    int i = 0;
 
+    // 申请循环数组,将指针循环保存到数组中
+    Node* store = (Node*)malloc(sizeof(Node) * (n+1));
+    memset(store, 0, sizeof(Node) * (n+1));
+    printf("malloc store finished ");
+    while(tmp) {
+        store[i%(n+1)] = tmp;
+        printf(" %d: %p   ", i, tmp);
+        tmp = tmp->next;
+        i++;
+    }
+
+    printf("save store finished ");
+
+    tmp = store[i%(n+1)];
+    printf("tmp: %p", tmp);
+    if(tmp) {
+        // 不是删头节点
+        if(tmp->next) {
+            // 不是删尾节点
+            tmp->next = tmp->next->next;
+            free(store[(i+1)%(n+1)]);
+            return head;
+        } else {
+            // 删尾节点
+            free(store[(i+1)%(n+1)]);
+            tmp->next = NULL;
+            return head;
+        }
+    } else {
+        // 删头节点
+        tmp = head;
+        head = head->next;
+        free(tmp);
+        return head;
+    }
 }
